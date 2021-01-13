@@ -1,9 +1,0 @@
-{
-    "name": "routerchain-server-mod",
-    "displayName": "[accent]routerchain[] - the server mod",
-    "author": "BasedUser @ the routerchain network",
-    "version": "0",
-    "description": "This mod imports all of the modded gameplay elements in routerchain. Note that popups will not be rendered, as this mod is meant for serverside use.\n[red]Requires BasedUser/tier4-proc.[]",
-    "dependencies": ["t4-processor"],
-    "hidden": true
-}
