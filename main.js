@@ -11,6 +11,7 @@ var getByUUID=(id)=>{
 }
 var tryRemoveTeam=(t)=>{
     t = getTeam(t);
+    if(t == null) return;
     if(t.get(2).size == 0) {
         playerTeams.remove(t);
     }
@@ -54,8 +55,8 @@ Events.on(PlayerJoin,e=>{
 	if(tAssign){
         if(timeouts.containsKey(e.player.uuid())){
             var snapshot = timeouts.get(e.player.uuid());
-            var time = snapshot.get(0);
-            var team = snapshot.get(1);
+            var team = snapshot.get(0);
+            var time = snapshot.get(1);
             if(time + baseTimeout > Time.millis() && team.core() != null) {
                 e.player.team(team);
                 timeouts.remove(e.player.uuid());
@@ -87,17 +88,17 @@ Events.on(PlayerLeave,e=>{
         return; // there is no timeout for rejoining a dead team, even if their core will be built later
     };
     var payload = new Seq();
-    payload.add(Time.millis());
     payload.add(e.player.team());
+    payload.add(Time.millis());
     timeouts.put(e.player.uuid(),payload);
     Timer.schedule(()=>{
         if(!Groups.player.contains(p=>{return p.uuid()==e.player.uuid()}) &&
-            ((payload.get(0) + baseTimeout) < Time.millis())
+            ((payload.get(1) + baseTimeout) < Time.millis())
         ) {
-            if(getTeam(payload.get(1)) != null) {
-                getTeam(payload.get(1)).get(2).remove(e.player.uuid());
+            if(getTeam(payload.get(0)) != null) {
+                getTeam(payload.get(0)).get(2).remove(e.player.uuid());
             }
-            tryRemoveTeam(payload.get(1));
+            tryRemoveTeam(payload.get(0));
         }
     },baseTimeout/1000)
 });
