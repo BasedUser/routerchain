@@ -59,7 +59,8 @@ Events.on(PlayerJoin,e=>{
             if(time + baseTimeout > Time.millis() && team.core() != null) {
                 e.player.team(team);
                 timeouts.remove(e.player.uuid());
-                Call.sendMessage(e.player.con,"Your session has been restored.","System",e.player);
+                Call.infoMessage(e.player.con,"Your session has been restored.");
+                e.player.name += " [#"+e.player.team().color+"]("+e.player.team().name.split("#").pop()+")";
                 return; // success
             } else if (team.core() == null) {
                 Call.infoMessage(e.player.con,"Your team's ("+e.player.team().name+") core is currently destroyed.\nBecause of that, you were reassigned to another team.");
