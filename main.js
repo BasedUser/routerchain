@@ -94,8 +94,10 @@ Events.on(PlayerLeave,e=>{
         if(!Groups.player.contains(p=>{return p.uuid()==e.player.uuid()}) &&
             ((payload.get(0) + baseTimeout) < Time.millis())
         ) {
-            getTeam(e.player.team()).get(2).remove(e.player.uuid());
-            tryRemoveTeam(e.player.team());
+            if(getTeam(payload.get(1)) != null) {
+                getTeam(payload.get(1)).get(2).remove(e.player.uuid());
+            }
+            tryRemoveTeam(payload.get(1));
         }
     },baseTimeout/1000)
 });
