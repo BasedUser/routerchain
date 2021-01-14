@@ -54,8 +54,8 @@ Events.on(PlayerJoin,e=>{
 	if(tAssign){
         if(timeouts.containsKey(e.player.uuid())){
             var snapshot = timeouts.get(e.player.uuid());
-            var team = snapshot.get(0);
-            var time = snapshot.get(1);
+            var time = snapshot.get(0);
+            var team = snapshot.get(1);
             if(time + baseTimeout > Time.millis() && team.core() != null) {
                 e.player.team(team);
                 timeouts.remove(e.player.uuid());
