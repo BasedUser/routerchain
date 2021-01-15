@@ -65,11 +65,11 @@ Events.on(PlayerJoin,e=>{
                 return; // success
             } else if (team.core() == null) {
                 Call.infoMessage(e.player.con,"Your team's ("+team.name+") core is currently destroyed.\nBecause of that, you were reassigned to another team.");
-                try {
+                if(getTeam(team) != null){
                     getTeam(team).get(2).remove(e.player.uuid());
-                } catch (x) {
-                    Log.info(x);
-                }
+                } else {
+		    Log.info("Attempt to remove player "+e.player.name+"from nonexistent player team "+team.name+"! (main.js:71)");
+		}
                 tryRemoveTeam(team);
             } else {
                 Call.infoMessage(e.player.con,"You have timed out, and were reassigned to another team.");
