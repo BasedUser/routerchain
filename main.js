@@ -2,7 +2,7 @@ UnitTypes.block.speed=32;
 UnitTypes.gamma.weapons.get(0).bullet.damage=2;
 var tAssign=true;
 var playerTeams = new Seq(); // PlayerTeam = {Team, boolean locked, String[] uuid}
-var timeouts = new ObjectMap(32); // {String uuid, [timestamp, Team]}
+var timeouts = new ObjectMap(32); // {String uuid: [Team, long timestamp]}
 // Why UUID? It's the only way I can reliably test a player against another, besides USID and IP.
 // This may or may not allow crossplay.
 var baseTimeout = 5 * 60 * 1000;
@@ -29,9 +29,9 @@ var getRandTeam=()=>{
 	return aTeams.get(Math.floor(Mathf.random(0,aTeams.size))).team;
 }
 var getTeam=t=>{
-    return playerTeams.contains(s=>{
+    return playerTeams.find(s=>{
         return s.get(0)==t
-    }) == true ? s : null;
+    });
 }
 var setTeam=(p,t)=>{
     if(getTeam(p.team()) != null) {
@@ -64,9 +64,13 @@ Events.on(PlayerJoin,e=>{
                 e.player.name += " [#"+e.player.team().color+"]("+e.player.team().name.split("#").pop()+")";
                 return; // success
             } else if (team.core() == null) {
-                Call.infoMessage(e.player.con,"Your team's ("+e.player.team().name+") core is currently destroyed.\nBecause of that, you were reassigned to another team.");
-                getTeam(team).get(2).remove(e.player.uuid());
-                tryRemoveTeam(p.team());
+                Call.infoMessage(e.player.con,"Your team's ("+team.name+") core is currently destroyed.\nBecause of that, you were reassigned to another team.");
+                try {
+                    getTeam(team).get(2).remove(e.player.uuid());
+                } catch (x) {
+                    Log.info(x);
+                }
+                tryRemoveTeam(team);
             } else {
                 Call.infoMessage(e.player.con,"You have timed out, and were reassigned to another team.");
             }
@@ -83,8 +87,10 @@ Events.on(PlayerJoin,e=>{
 });
 Events.on(PlayerLeave,e=>{
     if(e.player.team().core() == null) {
-        getTeam(e.player.team()).get(2).remove(e.player.uuid());
-        tryRemoveTeam(e.team());
+        if(getTeam(e.player.team()) == null) {
+            Log.info("Attempt to remove player "+e.player.name+" from nonexistent player team "+e.player.team().name+"!");
+        } else getTeam(e.player.team()).get(2).remove(e.player.uuid());
+        tryRemoveTeam(e.player.team());
         return; // there is no timeout for rejoining a dead team, even if their core will be built later
     };
     var payload = new Seq();
