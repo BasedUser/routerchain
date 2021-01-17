@@ -9,6 +9,10 @@ var baseTimeout = 5 * 60 * 1000;
 var getByUUID=(id)=>{
     return Groups.player.find(p=>{p.uuid()==id});
 }
+var getByIP=(ip)=>{
+  return Groups.player.find(p=>{p.address()==ip});
+}
+//this is called p.con.adress in java
 var tryRemoveTeam=(t)=>{
     t = getTeam(t);
     if(t == null) return;
