@@ -10,6 +10,10 @@ var findp=(name)=>Groups.player.find(p=>Strings.stripColors(p.name.toLowerCase()
 var getByUUID=(id)=>{
     return Groups.player.find(p=>{p.uuid()==id});
 }
+var getByIP=(ip)=>{
+  return Groups.player.find(p=>{p.address()==ip});
+}
+//this is called p.con.adress in java
 var tryRemoveTeam=(t)=>{
     t = getTeam(t);
     if(t == null) return;
